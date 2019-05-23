@@ -18,7 +18,7 @@ import kotlin.collections.ArrayList
 
 class Logger {
     companion object {
-        private const val fileName = "/Users/alyokhina-o/activity-tracker/activity_tracker.csv"
+        private const val fileName = "/Users/alyokhina-o/srw3/src/main/resources/activity_tracker.csv"
         private val headers = arrayOf("diffs", "fileName", "timestamp", "action", "params")
 
         private val fileWriter: FileWriter

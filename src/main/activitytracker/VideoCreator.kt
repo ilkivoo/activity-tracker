@@ -9,7 +9,7 @@ import java.awt.image.BufferedImage
 import java.util.concurrent.TimeUnit
 
 class VideoCreator(curCode: String) {
-    private val filePathForVideo = "/Users/alyokhina-o/activity-tracker/mydesktop.mp4"
+    private val filePathForVideo = "/Users/alyokhina-o/srw3/src/main/resources/activity_tracker.mp4"
     private val imageCreator = ImageCreator()
     private val textRedactor = TextRedactor(curCode)
     private val screenBounds = Toolkit.getDefaultToolkit().screenSize
