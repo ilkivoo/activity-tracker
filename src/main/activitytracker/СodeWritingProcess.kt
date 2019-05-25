@@ -8,8 +8,6 @@ import com.intellij.openapi.actionSystem.PlatformDataKeys
 
 class CodeWritingProcess : AnAction("СodeWritingProcess") {
     override fun actionPerformed(e: AnActionEvent?) {
-        //todo новый поток
-        //todo получаем данные с конца
         if (e == null) {
             return
         }
@@ -17,7 +15,7 @@ class CodeWritingProcess : AnAction("СodeWritingProcess") {
         val editor = e.getData(PlatformDataKeys.EDITOR) ?: return
         val curCode = editor.document.charsSequence.toString()
         val diffs = Logger.getLogs()
-        VideoCreator("").create(diffs)
+        VideoCreator(curCode).create(diffs)
         //todo окно что видео сохранено
     }
 }

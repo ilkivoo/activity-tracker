@@ -6,7 +6,6 @@ import activitytracker.liveplugin.*
 import activitytracker.liveplugin.VcsActions.Companion.registerVcsListener
 import activitytracker.log.Logger
 import activitytracker.model.Diffs
-import activitytracker.model.ParamsType
 import com.intellij.concurrency.JobScheduler
 import com.intellij.ide.IdeEventQueue
 import com.intellij.notification.NotificationType
@@ -53,8 +52,6 @@ class ActivityTracker(
     private var hasPsiClasses: Boolean? = null
     private var hasTaskManager: Boolean? = null
     private var curCode = ""
-    private var eventCount = 0
-    private var pasteCount = 0
     fun startTracking(config: Config) {
         if (trackingDisposable != null) return
         trackingDisposable = newDisposable(parentDisposable)
@@ -358,7 +355,7 @@ class ActivityTracker(
         params["BACKGROUND_B"] = editor.colorsScheme.defaultBackground.blue.toString()
         params["FONT_NAME"] = editor.colorsScheme.consoleFontName
         params["FONT_SIZE"] = "16" //editor.colorsScheme.consoleFontSize.toString()
-        val diff = Diffs.of(old!!, curCode, action, fileName, params)
+        val diff = Diffs.of(old, curCode, action, fileName, params)
         Logger.write(diff)
     }
 

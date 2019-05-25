@@ -68,7 +68,7 @@ class DiffMatchPatchConverter {
                 }
             }
             if (curIndNew < newString.length - 1) {
-                result.add(Diff(diff_match_patch.Operation.EQUAL, newString.substring(curInd)))
+                result.add(Diff(diff_match_patch.Operation.EQUAL, newString.substring(curIndNew)))
             }
             return result
         }

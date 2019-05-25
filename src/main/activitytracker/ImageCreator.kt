@@ -1,7 +1,6 @@
 package activitytracker
 
 import activitytracker.model.Diffs
-import activitytracker.model.ParamsType
 import com.intellij.util.ui.UIUtil
 import java.awt.Color
 import java.awt.Font
@@ -43,19 +42,12 @@ class ImageCreator {
         }
     }
 
-    fun addRectangle(image: BufferedImage,
-                     color: Color,
-                     width: Int,
-                     height: Int): BufferedImage {
-        return addRectangle(image, color, width - 50, 0, 35, 35)
-    }
-
-    private fun addRectangle(image: BufferedImage,
-                             color: Color,
-                             x: Int,
-                             y: Int,
-                             widthRectangle: Int,
-                             heightRectangle: Int): BufferedImage {
+    public fun addRectangle(image: BufferedImage,
+                            color: Color,
+                            x: Int,
+                            y: Int,
+                            widthRectangle: Int,
+                            heightRectangle: Int): BufferedImage {
         var g2d = image.createGraphics()
         g2d.drawRect(x, y, widthRectangle, heightRectangle)
         g2d.color = color
