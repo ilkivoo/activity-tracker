@@ -14,6 +14,7 @@ public enum class DiffType {
 
 class Diffs @JsonCreator constructor(@JsonProperty("diffs") val diffs: List<Diff>,
                                      @JsonProperty("fileName") val fileName: String,
+                                     @JsonProperty("projectName") val projectName: String,
                                      @JsonProperty("timestamp") val timestamp: Long,
                                      @JsonProperty("actionType") val action: String?,
                                      @JsonProperty("params") val params: Map<String, String>) {
@@ -22,11 +23,12 @@ class Diffs @JsonCreator constructor(@JsonProperty("diffs") val diffs: List<Diff
                       new: String,
                       action: String?,
                       fileName: String,
+                      projectName: String,
                       params: Map<String, String>): Diffs {
             val ts = System.currentTimeMillis()
             val dmp = diff_match_patch(null)
             val diff = dmp.diff_main(old, new)
-            return Diffs(DiffMatchPatchConverter.toModel(diff), fileName, ts, action, params)
+            return Diffs(DiffMatchPatchConverter.toModel(diff), fileName, projectName, ts, action, params)
         }
     }
 
@@ -34,6 +36,7 @@ class Diffs @JsonCreator constructor(@JsonProperty("diffs") val diffs: List<Diff
         return "Diffs {" + "\n" +
                 "diffs=" + diffs + ",\n" +
                 "fileName =" + fileName + ",\n" +
+                "projectName =" + projectName + ",\n" +
                 "timestamp =" + timestamp + "\n" +
                 "}"
     }

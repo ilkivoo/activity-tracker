@@ -12,23 +12,34 @@ class TextRedactor(baseString: String) {
     private val maxTextWidth = 120
     private val countLines = 30
     private val importRegexp = "import .*?".toRegex()
-
+    private var l1 = 0.0
+    private var r1 = 0.0
 
     fun getText(diff: Diffs, width: Int, height: Int): List<String> {
         val curText = getNewString(curCode, diff)
         curCode = curText
+        val lines = curText.split(System.lineSeparator())
         val line = (diff.params["MOUSE_COLUMN"] ?: "0").toInt()
         val pos = (diff.params["MOUSE_LINE"] ?: "0").toInt()
         val font = diff.params["ParamsType.FONT_SIZE"]?.toInt() ?: 14
-        return cutAndDeleteImports(curText, line, pos, countLines)
+        return cutAndDeleteImports(lines, curText, line, pos, countLines)
     }
 
-    private fun cutAndDeleteImports(text: String, line: Int, pos: Int, count: Int): List<String> {
-        val lines = text.split(System.lineSeparator())
+    fun getScope(): Map.Entry<Double, Double> {
+        return AbstractMap.SimpleEntry(l1, r1)
+    }
+
+    private fun cutAndDeleteImports(lines: List<String>,
+                                    text: String,
+                                    line: Int,
+                                    pos: Int,
+                                    count: Int): List<String> {
+
         val inds = TreeSet<Int>()
         var l = line
         var r = line
         var isExistImport = false
+        var importCount = 0
         inds.add(line)
         while (inds.size < count) {
             if (l - 1 < 0 && r + 1 > lines.size - 1) {
@@ -37,6 +48,7 @@ class TextRedactor(baseString: String) {
             if (l - 1 >= 0) {
                 if (importRegexp.containsMatchIn(lines[l - 1])) {
                     isExistImport = true
+                    importCount++
                 } else {
                     inds.add(l - 1)
                 }
@@ -51,6 +63,10 @@ class TextRedactor(baseString: String) {
                 r += 1
             }
         }
+
+        l1 = (inds.min()!!.toDouble() - importCount) / (lines.size - importCount)
+        r1 = (inds.max()!!.toDouble() + 1) / lines.size
+
         val result = ArrayList<String>()
         if (isExistImport) {
             result.add("import ...")

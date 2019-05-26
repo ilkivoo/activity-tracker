@@ -14,7 +14,7 @@ class DiffMatchPatchConverterTest {
     fun testGetModelDiff() {
         val text1 = "lalalatatatararara"
         val text2 = "lananalalatatararattt"
-        val actual = Diffs.of(text1, text2, "1", "file", HashMap())
+        val actual = Diffs.of(text1, text2, "1", "file", "project", HashMap())
         val expected = Arrays.asList(Diff(DiffType.INSERT, 2, "nana"),
                 Diff(DiffType.DELETE, 5, "at"),
                 Diff(DiffType.DELETE, 16, "ra"),
@@ -32,7 +32,7 @@ class DiffMatchPatchConverterTest {
         val diffs = Diffs(ArrayList(Arrays.asList(Diff(DiffType.INSERT, 2, "nana"),
                 Diff(DiffType.DELETE, 5, "at"),
                 Diff(DiffType.DELETE, 16, "ra"),
-                Diff(DiffType.INSERT, 18, "ttt"))), "1", 0, null, HashMap())
+                Diff(DiffType.INSERT, 18, "ttt"))), "1", "project", 0, null, HashMap())
         val actual = DiffMatchPatchConverter.fromModelOld(diffs, text1)
         assertEquals(expected, actual)
     }
@@ -45,7 +45,7 @@ class DiffMatchPatchConverterTest {
         val diffs = Diffs(ArrayList(Arrays.asList(Diff(DiffType.INSERT, 2, "nana"),
                 Diff(DiffType.DELETE, 5, "at"),
                 Diff(DiffType.DELETE, 16, "ra"),
-                Diff(DiffType.INSERT, 18, "ttt"))), "1", 0, null, HashMap())
+                Diff(DiffType.INSERT, 18, "ttt"))), "1", "project", 0, null, HashMap())
         val actualNew = DiffMatchPatchConverter.fromModelNew(diffs, text2)
         assertEquals(text1, dmp.diff_text1(LinkedList(actualNew)))
     }
@@ -60,13 +60,11 @@ class DiffMatchPatchConverterTest {
 
         var diff = dmp.diff_main(old1, old2)
         var x = DiffMatchPatchConverter.toModel(diff)
-        y.add(Diffs(x, "1", 0, "1", HashMap()))
+        y.add(Diffs(x, "1", "project", 0, "1", HashMap()))
 
         diff = dmp.diff_main(old2, new)
         x = DiffMatchPatchConverter.toModel(diff)
-        y.add(Diffs(x, "1", 0, "1", HashMap()))
-
-
+        y.add(Diffs(x, "1", "project", 0, "1", HashMap()))
         assertEquals(old1, getStartCode(y, new))
     }
 

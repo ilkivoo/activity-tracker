@@ -37,7 +37,6 @@ import java.awt.event.KeyEvent
 import java.awt.event.MouseEvent
 import java.awt.event.MouseWheelEvent
 import java.lang.System.currentTimeMillis
-import java.util.*
 import java.util.concurrent.TimeUnit.MILLISECONDS
 import javax.swing.JDialog
 import kotlin.collections.HashMap
@@ -342,21 +341,43 @@ class ActivityTracker(
 
     private fun updateCurFileAndWriteToLog(dataContext: DataContext,
                                            action: String?) {
-        val editor = dataContext.getData(PlatformDataKeys.EDITOR) ?: return
-        val vFile = dataContext.getData(PlatformDataKeys.VIRTUAL_FILE) ?: return
-        val fileName = vFile.name
-        val old = curCode
-        curCode = editor.document.charsSequence.toString()
-        val params = HashMap<String, String>()
-        params["MOUSE_COLUMN"] = editor.caretModel.logicalPosition.line.toString()
-        params["MOUSE_LINE"] = editor.caretModel.logicalPosition.column.toString()
-        params["BACKGROUND_R"] = editor.colorsScheme.defaultBackground.red.toString()
-        params["BACKGROUND_G"] = editor.colorsScheme.defaultBackground.green.toString()
-        params["BACKGROUND_B"] = editor.colorsScheme.defaultBackground.blue.toString()
-        params["FONT_NAME"] = editor.colorsScheme.consoleFontName
-        params["FONT_SIZE"] = "16" //editor.colorsScheme.consoleFontSize.toString()
-        val diff = Diffs.of(old, curCode, action, fileName, params)
-        Logger.write(diff)
+        try {
+            val ideFocusManager = IdeFocusManager.getGlobalInstance()
+            val focusOwner = ideFocusManager.focusOwner
+            val window = WindowManagerEx.getInstanceEx().mostRecentFocusedWindow
+                    ?: return
+
+            var ideHasFocus = window.isActive
+            if (!ideHasFocus) {
+                val ideFrame = findParentComponent<IdeFrameImpl?>(focusOwner) { it is IdeFrameImpl }
+                ideHasFocus = ideFrame != null && ideFrame.isActive
+            }
+            if (!ideHasFocus) return
+
+            val project = ideFocusManager.lastFocusedFrame?.project ?: return
+            val editor = currentEditorIn(project) ?: return
+            val vFile = currentFileIn(project) ?: return
+
+            // val editor = dataContext.getData(PlatformDataKeys.EDITOR) ?: return
+            //val vFile = dataContext.getData(PlatformDataKeys.VIRTUAL_FILE) ?: return
+            val fileName = vFile.name
+            // val project = dataContext.getData(PlatformDataKeys.PROJECT) ?: return
+            val projectName = project.name
+            val old = curCode
+            curCode = editor.document.charsSequence.toString()
+            val params = HashMap<String, String>()
+            params["MOUSE_COLUMN"] = editor.caretModel.logicalPosition.line.toString()
+            params["MOUSE_LINE"] = editor.caretModel.logicalPosition.column.toString()
+            params["BACKGROUND_R"] = editor.colorsScheme.defaultBackground.red.toString()
+            params["BACKGROUND_G"] = editor.colorsScheme.defaultBackground.green.toString()
+            params["BACKGROUND_B"] = editor.colorsScheme.defaultBackground.blue.toString()
+            params["FONT_NAME"] = editor.colorsScheme.consoleFontName
+            params["FONT_SIZE"] = "16" //editor.colorsScheme.consoleFontSize.toString()
+            val diff = Diffs.of(old, curCode, action, fileName, projectName, params)
+            Logger.write(diff)
+        } catch (e: Throwable) {
+            println(e)
+        }
     }
 
     data class Config(

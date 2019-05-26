@@ -18,9 +18,8 @@ import kotlin.collections.ArrayList
 
 class Logger {
     companion object {
-        private const val fileName = "/Users/alyokhina-o/srw3/src/main/resources/activity_tracker.csv"
-        private val headers = arrayOf("diffs", "fileName", "timestamp", "action", "params")
-
+        private val headers = arrayOf("diffs", "fileName", "projectName", "timestamp", "action", "params")
+        private const val defaultFileName = "activity_tracker.csv"
         private val fileWriter: FileWriter
         private val csvWriter: CSVWriter
         private const val hour = 3600000
@@ -28,7 +27,8 @@ class Logger {
         private val recordsLock = ReentrantLock()
         private val executorService = Executors.newScheduledThreadPool(1)
         private val objectMapper = ObjectMapper()
-
+        private val fileNameOpt = System.getenv()["ACTIVITY_TRACKER_LOG_FILE"]
+        private var fileName = fileNameOpt ?: defaultFileName
 
         init {
             val file = File(fileName)
@@ -48,6 +48,7 @@ class Logger {
                 val row = arrayOf(
                         objectMapper.writeValueAsString(diff.diffs),
                         diff.fileName,
+                        diff.projectName,
                         diff.timestamp.toString(),
                         diff.action ?: "",
                         objectMapper.writeValueAsString(diff.params))
@@ -79,13 +80,14 @@ class Logger {
             val result = ArrayList<Diffs>()
             while (true) {
                 val log = csvReader.readNext() ?: break
+                arrayOf("diffs", "fileName", "projectName", "timestamp", "action", "params")
                 try {
-                    if (log[2].toLong() < minTs) {
+                    if (log[3].toLong() < minTs) {
                         break
                     }
                     val diff = objectMapper.readValue<List<Diff>>(log[0], object : TypeReference<List<Diff>>() {})
-                    val params = objectMapper.readValue<Map<String, String>>(log[4], object : TypeReference<Map<String, String>>() {})
-                    result.add(Diffs(diff, log[1], log[2].toLong(), log[3], params))
+                    val params = objectMapper.readValue<Map<String, String>>(log[5], object : TypeReference<Map<String, String>>() {})
+                    result.add(Diffs(diff, log[1], log[2], log[3].toLong(), log[4], params))
                 } catch (ignore: Exception) {
                     println(log[0])
                     println(ignore.message)
