@@ -10,7 +10,7 @@ class TextRedactor(baseString: String) {
     private var curCode = baseString
     private val dmp = diff_match_patch(null)
     private val maxTextWidth = 120
-    private val countLines = 30
+    private val countLines = 27
     private val importRegexp = "import .*?".toRegex()
     private var l1 = 0.0
     private var r1 = 0.0

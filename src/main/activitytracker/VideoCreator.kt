@@ -15,7 +15,7 @@ import java.util.stream.Collectors
 
 class VideoCreator(val curCode: String,
                    val filePath: String?) {
-    private val defaultFilePathForVideo ="activity_tracker.mp4"
+    private val defaultFilePathForVideo = "activity_tracker.mp4"
     private val imageCreator = ImageCreator()
 
     private val screenBounds = Toolkit.getDefaultToolkit().screenSize
@@ -63,7 +63,7 @@ class VideoCreator(val curCode: String,
 
         for (i in 0 until diffs.size) {
             val diff = diffs[i]
-            val proc = getMA(diffs, i)
+            val proc = getMA(diffs, i, off)
             val date = Date(diff.timestamp)
             val text = textRedactor.getText(diff, width, height)
             val header = "File: ${diff.fileName}     Project: ${diff.projectName}"
@@ -130,11 +130,11 @@ class VideoCreator(val curCode: String,
         imageCreator.addText(image, "Paste", Color.BLACK, 2 * width / 3 + 30, height / 6 + 30)
     }
 
-    private fun getMA(diffs: List<Diffs>, ind: Int): Long {
+    private fun getMA(diffs: List<Diffs>, ind: Int, off: Long): Long {
         var eventCount = 0
         var pasteCount = 0
         var curInd = ind
-        val minTs = diffs[curInd].timestamp - min5
+        val minTs = diffs[curInd].timestamp - min5 - off
 
         while (curInd > 0) {
             if (diffs[curInd].timestamp < minTs) {
