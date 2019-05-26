@@ -15,7 +15,7 @@ import java.util.stream.Collectors
 
 class VideoCreator(val curCode: String,
                    val filePath: String?) {
-    private val defaultFilePathForVideo = "activity_tracker.mp4"
+    private val defaultFilePathForVideo ="activity_tracker.mp4"
     private val imageCreator = ImageCreator()
 
     private val screenBounds = Toolkit.getDefaultToolkit().screenSize
@@ -29,8 +29,7 @@ class VideoCreator(val curCode: String,
     private var lastTs = 0L
     private var acceleration = 2.0
     private var lastPasteTs = -1L
-    private var filePathForVideo = "/Users/alyokhina-o/srw3/src/main/resources/activity_tracker.mp4"
-    private val writer = ToolFactory.makeWriter(filePathForVideo)
+    private var filePathForVideo = defaultFilePathForVideo
 
     init {
         if (filePath != null && !filePath.isEmpty()) {
@@ -47,6 +46,7 @@ class VideoCreator(val curCode: String,
     }
 
     fun create(diffs1: List<Diffs>) {
+        val writer = ToolFactory.makeWriter(filePathForVideo)
         val diffs = diffs1.stream()
                 .sorted { o1, o2 -> (o1.timestamp - o2.timestamp).toInt() }
                 .collect(Collectors.toList())

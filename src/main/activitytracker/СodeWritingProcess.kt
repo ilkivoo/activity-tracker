@@ -64,7 +64,7 @@ class MyDialogWrapper(project: Project) : DialogWrapper(true) {
         dialogPanel.border = BorderFactory.createEmptyBorder(5, 5, 5, 5)
 
         dialogPanel.add(JLabel("имя файла:"))
-        val textFieldFileName = JTextField("activity-tracker", 35)
+        val textFieldFileName = JTextField("activity_tracker.mp4", 35)
         this.textField = textFieldFileName
         dialogPanel.add(textFieldFileName)
         return dialogPanel
